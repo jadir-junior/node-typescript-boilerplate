@@ -1,0 +1,20 @@
+import { Controller, Post, Get, Put, Delete } from '@overnightjs/core';
+import { Request, Response } from 'express';
+
+@Controller('{{ name }}')
+export class {{pascalCase name}}Controller {
+    @Get('')
+    public async find(req: Request, res: Response): Promise<void> {}
+
+    @Get(':id')
+    public async findOne(req: Request, res: Response): Promise<void> {}
+
+    @Post('')
+    public async create(req: Request, res: Response): Promise<void> {}
+
+    @Put('')
+    public async update(req: Request, res: Response): Promise<void> {}
+
+    @Delete('')
+    public async delete(req: Request, res: Response): Promise<void> {}
+}
