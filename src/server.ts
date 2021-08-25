@@ -6,6 +6,7 @@ import * as http from 'http';
 import express, { Application } from 'express';
 
 import { Server } from '@overnightjs/core';
+import { UsersController } from './controllers/users/users.controller';
 import cors from 'cors';
 import expressPino from 'express-pino-logger';
 import logger from './logger';
@@ -38,8 +39,8 @@ export class SetupServer extends Server {
   }
 
   private setupControllers(): void {
-    // const controller = new Controller();
-    // this.addControllers([controller])
+    const usersController = new UsersController();
+    this.addControllers([usersController]);
   }
 
   public getApp(): Application {
