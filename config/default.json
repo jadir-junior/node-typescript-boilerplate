@@ -1,8 +1,16 @@
 {
   "App": {
+    "port": 3000,
     "database": {
-      "mongoUrl": ""
+      "mongoUrl": "mongodb://localhost:27017/boilerplate"
     },
-    "resources": {}
+    "auth": {
+      "key": "some-key",
+      "tokenExpiresIn": "2000000000"
+    },
+    "logger": {
+      "enabled": true,
+      "level": "info"
+    }
   }
 }

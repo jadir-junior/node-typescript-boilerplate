@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "yarn build && node dist/src/index.js",
+    "start": "node dist/src/index.js",
     "start:dev": "ts-node-dev 'src/index.ts'",
+    "start:local": "ts-node-dev --transpile-only 'src/index.ts' | pino-pretty",
     "lint": "eslint ./src ./test --ext .ts --max-warnings=0",
     "lint:fix": "eslint ./src ./test --ext .ts --fix",
     "style:check": "prettier --check 'src/**/*.ts' 'test/**/*.ts'",
@@ -17,6 +18,7 @@
     "test": "yarn test:unit && yarn test:functional",
     "generate:controller": "yarn plop --plopfile ./generators/controller.js"
   },
+  "postinstall": "yarn build",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -30,6 +32,9 @@
   },
   "keywords": [],
   "author": "",
+  "engines": {
+    "node": "14.x"
+  },
   "license": "ISC",
   "dependencies": {
     "@overnightjs/core": "^1.7.6",
@@ -37,7 +42,8 @@
     "config": "^3.3.6",
     "express": "^4.17.1",
     "module-alias": "^2.2.2",
-    "mongoose": "^5.13.7"
+    "mongoose": "^5.13.7",
+    "pino": "^6.13.1"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -47,12 +53,14 @@
     "@types/module-alias": "^2.0.1",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^14.7.6",
+    "@types/pino": "^6.3.11",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
     "@typescript-eslint/parser": "^4.29.1",
     "eslint": "^7.32.0",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
+    "pino-pretty": "^6.0.0",
     "plop": "^2.7.4",
     "prettier": "^2.3.2",
     "supertest": "^6.1.5",
