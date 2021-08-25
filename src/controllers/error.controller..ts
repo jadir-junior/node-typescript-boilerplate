@@ -1,5 +1,6 @@
 import ApiError, { APIError } from '@src/util/errors/api-error';
 
+import { CUSTOM_VALIDATION } from '@src/models/user.model';
 import { Error } from 'mongoose';
 import { Response } from 'express';
 
@@ -13,8 +14,7 @@ export abstract class ErrorController {
         error instanceof Error.ValidatorError ||
         error instanceof Error.CastError
       ) {
-        //   return error.kind === CUSTOM_VALIDATION.DUPLICATED; // create enum custom_validation.duplicated
-        return error; // delete
+        return error.kind === CUSTOM_VALIDATION.DUPLICATED;
       } else {
         return null;
       }
@@ -36,7 +36,7 @@ export abstract class ErrorController {
       res.status(clientErrors.code).send(
         ApiError.format({
           code: clientErrors.code,
-          message: 'Something went wrong',
+          message: clientErrors.error,
         })
       );
     } else {

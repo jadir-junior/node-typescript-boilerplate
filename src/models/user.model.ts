@@ -18,7 +18,7 @@ export enum CUSTOM_VALIDATION {
 
 const schema = new Schema<UserModel>(
   {
-    name: { type: String, require: true },
+    name: { type: String, required: true },
     email: {
       type: String,
       required: true,
