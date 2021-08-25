@@ -1,3 +1,5 @@
+import ApiError, { APIError } from '@src/util/errors/api-error';
+
 import { Error } from 'mongoose';
 import { Response } from 'express';
 
@@ -31,11 +33,20 @@ export abstract class ErrorController {
   ): void {
     if (error instanceof Error.ValidationError) {
       const clientErrors = this.handleClientErros(error);
-      res
-        .status(clientErrors.code)
-        .send({ code: clientErrors.code, error: 'Something went wrong' });
+      res.status(clientErrors.code).send(
+        ApiError.format({
+          code: clientErrors.code,
+          message: 'Something went wrong',
+        })
+      );
     } else {
-      res.status(500).send({ code: 500, error: 'Something went wrong' });
+      res
+        .status(500)
+        .send(ApiError.format({ code: 500, message: 'Something went wrong' }));
     }
+  }
+
+  protected sendErrorResponse(res: Response, apiError: APIError): Response {
+    return res.status(apiError.code).send(ApiError.format(apiError));
   }
 }
