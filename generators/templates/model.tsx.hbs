@@ -1,0 +1,23 @@
+import { Document, Model, Schema, model, models } from 'mongoose';
+
+import logger from '@src/logger';
+
+export interface {{pascalCase name}} {
+  _id?: string;
+}
+
+interface {{pascalCase name}}Model extends Omit<{{pascalCase name}}, '_id'>, Document {}
+
+const schema = new Schema<{{pascalCase name}}Model>(
+  {},
+  {
+    timestamps: true,
+    toJSON: {
+      transform: (_, ret): void => {
+        delete ret.__v;
+      },
+    },
+  }
+);
+
+export const {{pascalCase name}}: Model<{{pascalCase name}}Model> = model('{{pascalCase name}}', schema);

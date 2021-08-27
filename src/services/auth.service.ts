@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import config from 'config';
 import jwt from 'jsonwebtoken';
 
-export interface DecodedUser extends Omit<User, 'password'> {}
+export type DecodedUser = Omit<User, 'password'>
 export default class AuthService {
   public static async hashPassword(
     password: string,

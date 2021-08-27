@@ -16,7 +16,8 @@
     "test:functional": "jest --projects ./test --runInBand",
     "test:unit": "jest",
     "test": "yarn test:unit && yarn test:functional",
-    "generate:controller": "yarn plop --plopfile ./generators/controller.js"
+    "generate:controller": "yarn plop --plopfile ./generators/controller.js",
+    "generate:middleware": "yarn plop --plopfile ./generators/middleware.js"
   },
   "postinstall": "yarn build",
   "husky": {
