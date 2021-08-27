@@ -7,7 +7,7 @@ export interface User {
   _id?: string;
   name: string;
   email: string;
-  password?: string;
+  password: string;
 }
 
 interface UserModel extends Omit<User, '_id'>, Document {}

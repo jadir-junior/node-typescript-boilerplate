@@ -7,6 +7,19 @@ describe('Users function tests', () => {
   });
 
   describe('When creating a new user', () => {
+    let token: string;
+
+    beforeEach(async () => {
+      const defaultUser = {
+        name: 'Mick Jagger',
+        email: 'mickjjagger@email.com',
+        password: '1234',
+      };
+
+      const user = await new User(defaultUser).save();
+      token = AuthService.generateToken(user.toJSON());
+    });
+
     it('should successfully create a new user with encrypted password', async () => {
       const newUser = {
         name: 'John Doe',
@@ -16,6 +29,7 @@ describe('Users function tests', () => {
 
       const response = await await global.testRequest
         .post('/users')
+        .set({ 'x-access-token': token })
         .send(newUser);
 
       expect(response.status).toBe(201);
@@ -34,7 +48,10 @@ describe('Users function tests', () => {
         password: '1234',
       };
 
-      const response = await global.testRequest.post('/users').send(newUser);
+      const response = await global.testRequest
+        .post('/users')
+        .set({ 'x-access-token': token })
+        .send(newUser);
 
       expect(response.status).toBe(422);
       expect(response.body).toEqual({
@@ -51,8 +68,14 @@ describe('Users function tests', () => {
         password: '1234',
       };
 
-      await global.testRequest.post('/users').send(newUser);
-      const response = await global.testRequest.post('/users').send(newUser);
+      await global.testRequest
+        .post('/users')
+        .set({ 'x-access-token': token })
+        .send(newUser);
+      const response = await global.testRequest
+        .post('/users')
+        .set({ 'x-access-token': token })
+        .send(newUser);
 
       expect(response.status).toBe(409);
       expect(response.body).toEqual({
@@ -74,7 +97,7 @@ describe('Users function tests', () => {
 
       await new User(newUser).save();
       const response = await global.testRequest
-        .post('/users/authenticate')
+        .post('/authentication/login')
         .send({ email: newUser.email, password: newUser.password });
 
       expect(response.body).toEqual(
@@ -82,9 +105,22 @@ describe('Users function tests', () => {
       );
     });
 
+    it('should return UNAUTHORIZED if the user dont fill input email or password with given email or password is required', async () => {
+      const response = await global.testRequest
+        .post('/authentication/login')
+        .send({ email: 'johndoe@email.com' });
+
+      expect(response.status).toBe(401);
+      expect(response.body).toEqual({
+        code: 401,
+        error: 'Unauthorized',
+        message: 'Email or password is required!',
+      });
+    });
+
     it('should return UNAUTHORIZED if the user with given email is not found', async () => {
       const response = await global.testRequest
-        .post('/users/authenticate')
+        .post('/authentication/login')
         .send({ email: 'some-email@email.com', password: '1234' });
 
       expect(response.status).toBe(401);
@@ -105,7 +141,7 @@ describe('Users function tests', () => {
       await new User(newUser).save();
 
       const response = await global.testRequest
-        .post('/users/authenticate')
+        .post('/authentication/login')
         .send({ email: newUser.email, password: 'different password' });
 
       expect(response.status).toBe(401);
@@ -113,6 +149,38 @@ describe('Users function tests', () => {
         code: 401,
         error: 'Unauthorized',
         message: 'Password does not match!',
+      });
+    });
+  });
+
+  describe('Routes when user is authenticated', () => {
+    let token: string;
+
+    beforeEach(async () => {
+      await User.deleteMany({});
+
+      const defaultUser = {
+        name: 'Default user',
+        email: 'defaultuser@email.com',
+        password: '1234',
+      };
+
+      const user = await new User(defaultUser).save();
+      token = AuthService.generateToken(user.toJSON());
+    });
+
+    it('should return me', async () => {
+      const response = await global.testRequest
+        .get('/users/me')
+        .set({ 'x-access-token': token });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual({
+        name: 'Default user',
+        email: 'defaultuser@email.com',
+        _id: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
       });
     });
   });
